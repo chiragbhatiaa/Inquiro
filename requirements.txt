@@ -2,4 +2,3 @@ llama-index
 python-dotenv
 llama-index-experimental
 streamlit
-openpypxl
