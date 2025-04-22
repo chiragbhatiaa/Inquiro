@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for dark theme styling matching the screenshot
+# Custom CSS for dark theme styling with cleaner interface (no highlighted containers)
 st.markdown("""
 <style>
     /* Main theme colors */
@@ -34,6 +34,13 @@ st.markdown("""
     .main {
         background-color: var(--background-color);
         color: var(--text-color);
+    }
+    
+    /* Full width content */
+    .block-container {
+        max-width: 100%;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
     }
     
     /* Sidebar styling */
@@ -57,21 +64,15 @@ st.markdown("""
         font-weight: 400;
     }
     
-    /* Cards and containers */
-    .highlight {
-        background-color: var(--card-bg-color);
-        padding: 20px;
-        border-radius: 8px;
+    /* Seamless UI - no container boxes for main content */
+    .seamless-section {
         margin-bottom: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0;
     }
     
-    .chat-container {
-        border-radius: 8px;
-        background-color: var(--card-bg-color);
-        padding: 20px;
-        margin-top: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Chat messages styling */
+    .chat-message-container {
+        margin-bottom: 15px;
     }
     
     /* Custom button styling */
@@ -85,56 +86,17 @@ st.markdown("""
     }
     
     /* Message styling */
-    .welcome-message {
-        padding: 15px;
-        border-radius: 5px;
-        background-color: rgba(45, 142, 205, 0.1);
-        border-left: 5px solid var(--accent-color);
-    }
-    
-    .error-message {
-        padding: 15px;
-        border-radius: 5px;
-        background-color: rgba(217, 83, 79, 0.1);
-        border-left: 5px solid var(--error-color);
-        margin-bottom: 15px;
-    }
-    
-    .success-message {
-        padding: 15px;
-        border-radius: 5px;
-        background-color: rgba(92, 184, 92, 0.1);
-        border-left: 5px solid var(--success-color);
-        margin-bottom: 15px;
-    }
-    
     .warning-message {
-        padding: 15px;
-        border-radius: 5px;
-        background-color: rgba(240, 173, 78, 0.1);
-        border-left: 5px solid var(--warning-color);
+        display: flex;
+        align-items: center;
+        padding: 12px 15px;
+        border-radius: 4px;
+        background-color: rgba(240, 173, 78, 0.2);
+        color: #f0ad4e;
         margin-bottom: 15px;
     }
-    
-    /* Info box */
-    .info-box {
-        padding: 10px;
-        background-color: var(--input-bg-color);
-        border-radius: 5px;
-        font-size: 0.9rem;
-        color: var(--subtext-color);
-    }
-    
-    /* Sidebar content */
-    .sidebar-content {
-        padding: 20px 0;
-    }
-    
-    /* Input fields */
-    .stTextInput > div > div > input {
-        background-color: var(--input-bg-color);
-        color: var(--text-color);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    .warning-message svg {
+        margin-right: 10px;
     }
     
     /* Chat input */
@@ -145,70 +107,137 @@ st.markdown("""
     
     /* Footer styling */
     .footer {
-        margin-top: 50px;
+        margin-top: 30px;
         padding-top: 10px;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         color: var(--subtext-color);
         font-size: 0.8rem;
     }
     
-    /* Table styling */
-    .dataframe {
-        background-color: var(--card-bg-color);
-    }
-    
-    /* Expandable sections */
-    .streamlit-expanderHeader {
-        background-color: var(--card-bg-color);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 5px;
-        color: var(--text-color);
-    }
-    
-    /* System container */
-    .system-container {
-        background-color: var(--input-bg-color);
-        padding: 10px;
-        border-radius: 5px;
-        margin: 10px 0;
-        font-family: monospace;
-        font-size: 0.85rem;
-        color: #cccccc;
-    }
-    
-    /* Chat message styling */
+    /* User message styling */
     .user-message {
-        background-color: rgba(45, 142, 205, 0.1);
-        padding: 10px 15px;
+        display: flex;
+        justify-content: flex-end;
+        margin: 10px 0;
+    }
+    
+    .user-message-content {
+        background-color: rgba(45, 142, 205, 0.2);
+        padding: 12px 16px;
         border-radius: 18px 18px 2px 18px;
-        margin: 10px 0;
         max-width: 80%;
-        align-self: flex-end;
-    }
-    
-    .bot-message {
-        background-color: var(--input-bg-color);
-        padding: 10px 15px;
-        border-radius: 18px 18px 18px 2px;
-        margin: 10px 0;
-        max-width: 80%;
-        align-self: flex-start;
-    }
-    
-    /* Override Streamlit defaults */
-    .stAlert > div {
-        background-color: var(--card-bg-color);
         color: var(--text-color);
     }
     
-    .stMetric {
+    /* Bot message styling */
+    .bot-message {
+        display: flex;
+        justify-content: flex-start;
+        margin: 10px 0;
+    }
+    
+    .bot-message-content {
+        background-color: var(--input-bg-color);
+        padding: 12px 16px;
+        border-radius: 18px 18px 18px 2px;
+        max-width: 80%;
+        color: var(--text-color);
+    }
+    
+    /* Welcome section */
+    .welcome-section {
+        margin-top: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .welcome-header {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--text-color);
+    }
+    
+    .welcome-text {
+        color: var(--subtext-color);
+        margin-bottom: 20px;
+    }
+    
+    /* Steps list */
+    .steps-list {
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 15px;
+    }
+    
+    .steps-list li {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .steps-list .step-number {
+        background-color: var(--accent-color);
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 10px;
+        font-size: 0.9rem;
+    }
+    
+    /* Chat section title */
+    .section-title {
+        margin-top: 30px;
+        margin-bottom: 15px;
+        font-size: 1.4rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+    }
+    
+    .section-title svg {
+        margin-right: 10px;
+    }
+    
+    /* Remove box shadows from expandable sections */
+    .streamlit-expanderHeader {
+        background-color: transparent;
+        border: none;
+        color: var(--text-color);
+        font-weight: 600;
+    }
+    
+    .streamlit-expanderContent {
+        border: none;
         background-color: transparent;
     }
     
-    /* File uploader styling */
+    /* Input fields */
+    .stTextInput > div > div > input {
+        background-color: var(--input-bg-color);
+        color: var(--text-color);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* File uploader */
     .css-1ekf893 {
         background-color: var(--input-bg-color);
         border: 1px dashed rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Hide default expander styling */
+    .st-emotion-cache-1oe5cao {
+        box-shadow: none !important;
+        border: none !important;
+    }
+    
+    /* Divider */
+    hr {
+        border-color: rgba(255, 255, 255, 0.1);
+        margin: 20px 0;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -228,14 +257,13 @@ if "processing" not in st.session_state:
 if "error" not in st.session_state:
     st.session_state.error = None
 
-# Main header
+# Main header - subtle and clean
 st.markdown('<p class="main-header">Inquiro Bot</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Intelligent Data Analysis Assistant</p>', unsafe_allow_html=True)
 
 # Sidebar configuration
 with st.sidebar:
-    st.markdown('<div class="sidebar-content">', unsafe_allow_html=True)
-    st.subheader("Configuration")
+    st.markdown("## Configuration")
     
     # API Key input
     st.markdown("#### OpenAI API Key")
@@ -248,18 +276,20 @@ with st.sidebar:
             llm = OpenAI(model="gpt-4o-mini", temperature=0.0, api_key=openai_api_key)
             st.session_state.api_key_valid = True
             st.session_state.llm = llm
-            st.markdown('<div class="success-message">API key validated!</div>', unsafe_allow_html=True)
+            st.success("API key validated!")
         except Exception as e:
             st.session_state.api_key_valid = False
-            st.markdown(f'<div class="error-message">API key error: {str(e)}</div>', unsafe_allow_html=True)
+            st.error(f"API key error: {str(e)}")
     
-    st.markdown('<div class="info-box"><a href="https://platform.openai.com/api-keys" target="_blank">Get one here</a></div>', unsafe_allow_html=True)
+    st.markdown('<a href="https://platform.openai.com/api-keys" target="_blank">Get one here</a>', unsafe_allow_html=True)
+    
+    st.divider()
     
     # File uploader
-    st.markdown("#### Dataset")
+    st.markdown("## Dataset")
     
     # File upload area with instructions
-    st.markdown("##### Upload your dataset")
+    st.markdown("#### Upload your dataset")
     uploaded_file = st.file_uploader(
         "Drag and drop file here", 
         type=["csv", "xls", "xlsx"],
@@ -277,16 +307,14 @@ with st.sidebar:
                 
                 st.session_state.df = df
                 st.session_state.file_uploaded = True
-                st.markdown(f'<div class="success-message">Dataset loaded successfully! <br>Rows: {df.shape[0]} | Columns: {df.shape[1]}</div>', unsafe_allow_html=True)
+                st.success(f"Dataset loaded successfully! Rows: {df.shape[0]} | Columns: {df.shape[1]}")
                 
                 # Display dataset preview in sidebar
-                st.subheader("Dataset Preview")
+                st.markdown("#### Dataset Preview")
                 st.dataframe(df.head(3), use_container_width=True)
         except Exception as e:
             st.session_state.file_uploaded = False
-            st.markdown(f'<div class="error-message">Error loading file: {str(e)}</div>', unsafe_allow_html=True)
-    
-    st.markdown('</div>', unsafe_allow_html=True)
+            st.error(f"Error loading file: {str(e)}")
 
 # Used to stream sys output on the streamlit frontend
 class StreamToContainer:
@@ -311,11 +339,11 @@ def generate_response(df, user_input, llm):
         error_message = f"Analysis error: {str(e)}"
         return None, error_message
 
-# Main content area - single column layout like in the screenshot
+# Main content area - No container boxes
 main_container = st.container()
 
 with main_container:
-    # App description and guidance
+    # Discreet "About" section as an expander
     with st.expander("About Inquiro Bot", expanded=False):
         st.markdown("""
         ### How to use Inquiro Bot
@@ -334,30 +362,30 @@ with main_container:
     # Check if prerequisites are met
     requirements_met = st.session_state.api_key_valid and st.session_state.file_uploaded
     
+    # Warning message only when requirements not met
     if not requirements_met:
-        # Warning message when requirements not met
         if not st.session_state.file_uploaded:
             st.markdown('<div class="warning-message">⚠️ Please upload a dataset in the sidebar</div>', unsafe_allow_html=True)
-        elif not st.session_state.api_key_valid:
-            st.markdown('<div class="warning-message">⚠️ Please enter a valid OpenAI API key in the sidebar</div>', unsafe_allow_html=True)
+    
+    # Welcome section - directly on the page, no container
+    if not requirements_met:
+        st.markdown('<div class="welcome-section">', unsafe_allow_html=True)
+        st.markdown('<h2 class="welcome-header">Welcome to Inquiro Bot!</h2>', unsafe_allow_html=True)
+        st.markdown('<p class="welcome-text">To get started:</p>', unsafe_allow_html=True)
         
-        # Welcome message and instructions
-        st.markdown('<div class="welcome-message">', unsafe_allow_html=True)
         st.markdown("""
-        ### Welcome to Inquiro Bot!
+        <ul class="steps-list">
+            <li><span class="step-number">1</span> Enter your OpenAI API key in the sidebar</li>
+            <li><span class="step-number">2</span> Upload a CSV or Excel file</li>
+            <li><span class="step-number">3</span> Start asking questions about your data</li>
+        </ul>
+        <p class="welcome-text">Inquiro Bot helps you analyze and understand your data through natural language conversations.</p>
+        """, unsafe_allow_html=True)
         
-        To get started:
-        
-        1. Enter your OpenAI API key in the sidebar
-        2. Upload a CSV or Excel file
-        3. Start asking questions about your data
-        
-        Inquiro Bot helps you analyze and understand your data through natural language conversations.
-        """)
-        
-    # Chat interface
-    st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-    st.markdown('<h3>💬 Chat with your data</h3>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Chat section title - clean style
+    st.markdown('<h3 class="section-title">💬 Chat with your data</h3>', unsafe_allow_html=True)
     
     # Initialize chat history
     if "messages" not in st.session_state:
@@ -368,22 +396,34 @@ with main_container:
     # Display chat messages with custom styling
     for message in st.session_state.messages:
         if message["role"] == "user":
-            st.markdown(f'<div class="user-message">{message["content"]}</div>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="user-message">
+                <div class="user-message-content">{message["content"]}</div>
+            </div>
+            """, unsafe_allow_html=True)
         else:
-            st.markdown(f'<div class="bot-message">{message["content"]}</div>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="bot-message">
+                <div class="bot-message-content">{message["content"]}</div>
+            </div>
+            """, unsafe_allow_html=True)
     
-    # Chat input
+    # Chat input - no containing box
     if prompt := st.chat_input("Ask a question about your data...", disabled=not requirements_met):
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
         
         # Display the new user message
-        st.markdown(f'<div class="user-message">{prompt}</div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="user-message">
+            <div class="user-message-content">{prompt}</div>
+        </div>
+        """, unsafe_allow_html=True)
         
         # Generate and display assistant response
         if requirements_met:
             with st.spinner("Analyzing data..."):
-                # System process container
+                # System process container - hidden by default
                 with st.expander("System process", expanded=False):
                     sys_output = st.empty()
                     
@@ -401,18 +441,24 @@ with main_container:
                     st.error(error)
                     response = "I encountered an error while analyzing your data. Please try rephrasing your question or check if your data contains the information you're looking for."
                 
-                st.markdown(f'<div class="bot-message">{response}</div>', unsafe_allow_html=True)
+                st.markdown(f"""
+                <div class="bot-message">
+                    <div class="bot-message-content">{response}</div>
+                </div>
+                """, unsafe_allow_html=True)
                 
                 # Add assistant response to chat history
                 st.session_state.messages.append({"role": "assistant", "content": response})
         else:
             error_message = "Please provide a valid OpenAI API key and upload a dataset before asking questions."
-            st.markdown(f'<div class="bot-message">{error_message}</div>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="bot-message">
+                <div class="bot-message-content">{error_message}</div>
+            </div>
+            """, unsafe_allow_html=True)
             st.session_state.messages.append({"role": "assistant", "content": error_message})
     
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # Add dataset information if available
+    # Add dataset information if available - as an expander
     if st.session_state.file_uploaded and requirements_met:
         with st.expander("Dataset Information", expanded=False):
             df = st.session_state.df
@@ -441,7 +487,7 @@ with main_container:
             })
             st.dataframe(column_info, use_container_width=True)
 
-# Footer
+# Footer - minimal and clean
 st.markdown('<div class="footer">', unsafe_allow_html=True)
 st.markdown('Inquiro Bot | Your intelligent data analysis assistant', unsafe_allow_html=True)
 st.markdown('</div>', unsafe_allow_html=True)
