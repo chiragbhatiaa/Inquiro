@@ -75,7 +75,7 @@ with st.sidebar:
 st.title("🤖 Inquiro Bot")
 st.markdown("Your **AI-powered assistant** for seamless data exploration.")
 
-# Example Quick Queries
+# Quick Query Buttons
 if st.session_state.file_uploaded:
     st.markdown("### ⚡ Try Quick Queries")
     cols = st.columns(3)
@@ -84,20 +84,14 @@ if st.session_state.file_uploaded:
         if cols[i].button(q):
             st.session_state.pending_prompt = q
 
-# Display Chat Interface
-st.markdown("---")
-st.subheader("💬 Chat with your Data")
-for message in st.session_state.messages:
-    if message["role"] == "user":
-        st.markdown(f"**You:** {message['content']}")
-    else:
-        st.markdown(f"**Inquiro Bot:** {message['content']}")
-
-# Handle chat input and quick queries
+# ---------------------- Chat Processing ---------------------- #
+# Get user prompt
 user_input = st.chat_input("Ask your data anything...", disabled=not (st.session_state.api_key_valid and st.session_state.file_uploaded))
-if user_input or st.session_state.pending_prompt:
-    prompt = user_input if user_input else st.session_state.pending_prompt
-    st.session_state.pending_prompt = None
+prompt = user_input if user_input else st.session_state.pending_prompt
+st.session_state.pending_prompt = None  # Clear after use
+
+# If there's a prompt, process it
+if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     with st.spinner("Analyzing..."):
@@ -112,7 +106,18 @@ if user_input or st.session_state.pending_prompt:
         response, error = generate_response(st.session_state.df, prompt, st.session_state.llm)
         if error:
             response = "⚠️ Error: " + error
+
         st.session_state.messages.append({"role": "assistant", "content": response})
+
+# ---------------------- Chat Display ---------------------- #
+st.markdown("---")
+st.subheader("💬 Chat with your Data")
+
+for message in st.session_state.messages:
+    if message["role"] == "user":
+        st.markdown(f"**You:** {message['content']}")
+    else:
+        st.markdown(f"**Inquiro Bot:** {message['content']}")
 
 # ---------------------- Footer ---------------------- #
 st.markdown("---")
