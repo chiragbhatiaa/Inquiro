@@ -26,6 +26,7 @@ def init_session():
     st.session_state.setdefault("messages", [
         {"role": "assistant", "content": "Hello! I'm Inquiro Bot. Upload your dataset and ask away!"}
     ])
+    st.session_state.setdefault("pending_prompt", None)
 
 init_session()
 
@@ -81,7 +82,7 @@ if st.session_state.file_uploaded:
     queries = ["Show me summary statistics.", "Which product performed best?", "Any missing values?"]
     for i, q in enumerate(queries):
         if cols[i].button(q):
-            st.session_state.messages.append({"role": "user", "content": q})
+            st.session_state.pending_prompt = q
 
 # Display Chat Interface
 st.markdown("---")
@@ -92,8 +93,13 @@ for message in st.session_state.messages:
     else:
         st.markdown(f"**Inquiro Bot:** {message['content']}")
 
-if prompt := st.chat_input("Ask your data anything...", disabled=not (st.session_state.api_key_valid and st.session_state.file_uploaded)):
+# Handle chat input and quick queries
+user_input = st.chat_input("Ask your data anything...", disabled=not (st.session_state.api_key_valid and st.session_state.file_uploaded))
+if user_input or st.session_state.pending_prompt:
+    prompt = user_input if user_input else st.session_state.pending_prompt
+    st.session_state.pending_prompt = None
     st.session_state.messages.append({"role": "user", "content": prompt})
+
     with st.spinner("Analyzing..."):
         def generate_response(df, user_input, llm):
             try:
