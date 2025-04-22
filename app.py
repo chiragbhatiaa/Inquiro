@@ -29,9 +29,14 @@ def init_session():
 
 init_session()
 
-# ---------------------- Custom CSS ---------------------- #
-with open("styles.css") as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+# ---------------------- Inline CSS Styling ---------------------- #
+st.markdown("""
+<style>
+    .main { background-color: #1e1f29; color: #ffffff; }
+    .block-container { max-width: 100%; padding-top: 1rem; }
+    .stButton>button { background-color: #2d8ecd; color: white; border-radius: 4px; }
+</style>
+""", unsafe_allow_html=True)
 
 # ---------------------- Sidebar ---------------------- #
 with st.sidebar:
