@@ -354,7 +354,6 @@ with main_container:
         
         Inquiro Bot helps you analyze and understand your data through natural language conversations.
         """)
-        st.markdown('</div>', unsafe_allow_html=True)
     
     # Chat interface
     st.markdown('<div class="chat-container">', unsafe_allow_html=True)
